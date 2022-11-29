@@ -1,10 +1,4 @@
-pipeline {
-  agent {
-    node {
-      label 'master'
-    }
-
-  }
+node('master') {
   stages {
     stage('Build') {
       steps {
