@@ -16,6 +16,6 @@ pipeline {
         archiveArtifacts 'target/*.jar'
       }
     }
-    
+
   }
 }
