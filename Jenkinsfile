@@ -1,18 +1,9 @@
-pipeline {
-  agent {
-    node {
-      label 'master'
+podTemplate(containers: [containerTemplate(name: 'maven', image: 'maven', command: 'sleep', args: 'infinity')]) {
+  node("master") {
+    checkout scm
+    container('maven') {
+      sh 'mvn -B -ntp -Dmaven.test.failure.ignore verify'
     }
-  }
-  stages {
-    stage('Build') {
-      steps {
-        // Run Maven on a Unix agent.
-        withMaven(maven: 'M3')
-        sh "mvn -Dmaven.test.failure.ignore=true clean package"
-        // To run Maven on a Windows agent, use
-        // bat "mvn -Dmaven.test.failure.ignore=true clean package"
-      }
-    }
+    junit '**/target/surefire-reports/TEST-*.xml'
   }
 }
