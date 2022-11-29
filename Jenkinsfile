@@ -4,7 +4,7 @@ pipeline {
     stage('Build') {
       steps {
         withMaven(maven: 'M3') {
-          bat 'mvn clean install'
+          sh 'mvn clean install'
         }
 
       }
@@ -13,14 +13,9 @@ pipeline {
     stage('Results') {
       steps {
         junit '**/target/surefire-reports/TEST-*.xml'
-      }
-    }
-
-    stage('Jar') {
-      steps {
         archiveArtifacts 'target/*.jar'
       }
     }
-
+    
   }
 }
