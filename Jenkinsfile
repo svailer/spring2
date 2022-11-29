@@ -1,17 +1,25 @@
-node ('master') {
-checkout scm
-stage('Build') {
-withMaven(maven: 'M3') {
-  if (isUnix()) {
-sh 'mvn -Dmaven.test.failure.ignore clean package'
-}
-else {
-bat 'mvn -Dmaven.test.failure.ignore clean package'
-}
-}
-}
-stage('Results') {
-junit '**/target/surefire-reports/TEST-*.xml'
-archive 'target/*.jar'
-}
+pipeline {
+  agent{
+        label 'master'
+  }
+  tools {
+    // Install the Maven version configured as "M3" and add it to the path.
+    maven "M3"
+  }
+  stages {
+    stage('Preparation') {
+      steps {
+        // Get some code from a GitHub repository
+        git 'https://github.com/svailer/pipe.git'
+      }
+    }
+    stage('Build') {
+      steps {
+        // Run Maven on a Unix agent.
+        sh "mvn -Dmaven.test.failure.ignore=true clean package"
+        // To run Maven on a Windows agent, use
+        // bat "mvn -Dmaven.test.failure.ignore=true clean package"
+      }
+    }
+  }
 }
