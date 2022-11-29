@@ -1,20 +1,23 @@
-node('master') {
+pipeline {
+  agent any
+  tools {
+    // Install the Maven version configured as "M3" and add it to the path.
+    maven "M3"
+  }
   stages {
+    stage('Preparation') {
+      steps {
+        // Get some code from a GitHub repository
+        git 'https://github.com/svailer/spring2.git'
+      }
+    }
     stage('Build') {
       steps {
-        withMaven(maven: 'M3') {
-          sh 'mvn clean install'
-        }
-
+        // Run Maven on a Unix agent.
+        sh "mvn -Dmaven.test.failure.ignore=true clean package"
+        // To run Maven on a Windows agent, use
+        // bat "mvn -Dmaven.test.failure.ignore=true clean package"
       }
     }
-
-    stage('Results') {
-      steps {
-        junit '**/target/surefire-reports/TEST-*.xml'
-        archiveArtifacts 'target/*.jar'
-      }
-    }
-
   }
 }
